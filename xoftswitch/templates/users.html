@@ -1,0 +1,38 @@
+{{define "title"}}User List{{end}}
+{{define "content"}}
+<h1>Users</h1>
+<table border="1" cellpadding="6">
+  <tr>
+    <th>Username</th>
+    <th>Name</th>
+    <th>First</th>
+    <th>Last</th>
+    <th>Email</th>
+    <th>Phone</th>
+    <th>Role</th>
+    <th>Status</th>
+    <th>Actions</th>
+  </tr>
+  {{range .Users}}
+  <tr>
+    <td>{{.Username}}</td>
+    <td>{{.Name}}</td>
+    <td>{{.Firstname}}</td>
+    <td>{{.Lastname}}</td>
+    <td>{{.Email}}</td>
+    <td>{{.Phonenumber}}</td>
+    <td>{{.Roleid}}</td>
+    <td>{{.Status}}</td>
+    <td>
+      <a href="/edituser?username={{.Username}}">Edit</a> |
+      <a href="/userextensions?username={{.Username}}">Extensions</a>
+    </td>
+  </tr>
+  {{end}}
+</table>
+
+<br>
+<form action="/adduser" method="get">
+  <button type="submit">Add User</button>
+</form>
+{{end}}

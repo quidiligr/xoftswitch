@@ -1,0 +1,202 @@
+{{define "title"}}Edit Extension{{end}}
+{{define "content"}}
+<h1>Edit Extension</h1>
+
+<form id="edit-ext-form" method="POST" class="form-standard" novalidate>
+
+  <div class="form-row">
+    <label for="number">Extension:</label>
+    <input id="number" name="number" value="{{.Number}}" readonly autocomplete="off">
+  </div>
+
+  <div class="form-row">
+    <label for="displayname">Display Name:</label>
+    <input id="displayname" name="displayname" value="{{.Displayname}}" placeholder="Optional display name" autocomplete="name">
+  </div>
+
+  <div class="form-row">
+    <label for="email">Email:</label>
+    <input id="email" name="email" value="{{.Email}}" placeholder="Optional email" autocomplete="email">
+  </div>
+
+  <div class="form-row">
+    <label for="secret">Secret:</label>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <input id="secret" name="secret" value="{{.Secret}}" type="password" autocomplete="new-password" minlength="12" placeholder="Leave as-is or update">
+      <button type="button" id="toggle-secret" class="btn-cancel" aria-label="Show or hide secret">Show</button>
+      <button type="button" id="gen-secret" class="btn-cancel" aria-label="Generate new secret">Generate</button>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <label for="webrtc">WebRTC:</label>
+    <select id="webrtc" name="webrtc">
+      <option value="yes" {{if eq .Webrtc "yes"}}selected{{end}}>Yes</option>
+      <option value="no"  {{if eq .Webrtc "no"}}selected{{end}}>No</option>
+    </select>
+  </div>
+
+  <div class="form-row">
+    <label for="direct_media">Direct Media:</label>
+    <select id="direct_media" name="direct_media">
+      <option value="yes" {{if eq .Directmedia "yes"}}selected{{end}}>Yes</option>
+      <option value="no"  {{if eq .Directmedia "no"}}selected{{end}}>No</option>
+    </select>
+  </div>
+
+  <div class="form-row">
+    <label for="public">Public:</label>
+    <select id="public" name="public">
+      <option value="yes" {{if eq .Public "yes"}}selected{{end}}>Yes</option>
+      <option value="no"  {{if eq .Public "no"}}selected{{end}}>No</option>
+    </select>
+  </div>
+
+  <div class="form-row">
+    <label for="canblock">Can Block:</label>
+    <select id="canblock" name="canblock">
+      <option value="yes" {{if eq .Canblock "yes"}}selected{{end}}>Yes</option>
+      <option value="no"  {{if eq .Canblock "no"}}selected{{end}}>No</option>
+    </select>
+  </div>
+
+  <div class="form-row">
+    <label for="canunlist">Can Unlist:</label>
+    <select id="canunlist" name="canunlist">
+      <option value="yes" {{if eq .Canunlist "yes"}}selected{{end}}>Yes</option>
+      <option value="no"  {{if eq .Canunlist "no"}}selected{{end}}>No</option>
+    </select>
+  </div>
+
+  <div class="form-row">
+    <label for="canaddlist">Can Add List:</label>
+    <select id="canaddlist" name="canaddlist">
+      <option value="yes" {{if eq .Canaddlist "yes"}}selected{{end}}>Yes</option>
+      <option value="no"  {{if eq .Canaddlist "no"}}selected{{end}}>No</option>
+    </select>
+  </div>
+
+  <div class="form-row">
+    <label for="candial">Can Dialout:</label>
+    <select id="candial" name="candial">
+      <option value="yes" {{if eq .Candial "yes"}}selected{{end}}>Yes</option>
+      <option value="no"  {{if eq .Candial "no"}}selected{{end}}>No</option>
+    </select>
+  </div>
+
+  <div class="form-actions">
+    <button id="submit-btn" type="submit" class="btn-submit">Save Changes</button>
+    <a href="/extensions" class="btn-cancel">Cancel</a>
+  </div>
+</form>
+
+<!-- Loading overlay -->
+<div id="loading-overlay" aria-hidden="true">
+  <div class="loader" role="status" aria-live="polite" aria-label="Submitting, please wait"></div>
+  <div class="loader-text">Submitting… Please wait</div>
+</div>
+
+<style>
+/* Layout (matches addextension.html) */
+body { font-family: Arial, sans-serif; background-color: #f7f7f7; padding: 20px; }
+h1 { color: #333; margin-bottom: 20px; }
+.form-standard { background: #fff; padding: 20px; border-radius: 8px; max-width: 500px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+.form-row { display: flex; flex-direction: column; margin-bottom: 15px; }
+.form-row label { font-weight: bold; margin-bottom: 5px; color: #555; }
+.form-row input, .form-row select { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+.form-row input:focus, .form-row select:focus { outline: none; border-color: #007BFF; box-shadow: 0 0 3px rgba(0,123,255,0.3); }
+.form-actions { display: flex; gap: 10px; justify-content: flex-start; margin-top: 20px; }
+.btn-submit { background-color: #007BFF; color: white; border: none; padding: 10px 18px; border-radius: 4px; cursor: pointer; font-size: 14px; }
+.btn-submit:hover { background-color: #0056b3; }
+.btn-cancel { display: inline-block; padding: 10px 18px; color: #555; border: 1px solid #ccc; border-radius: 4px; text-decoration: none; font-size: 14px; }
+.btn-cancel:hover { background-color: #eee; color: #333; }
+@media (max-width: 600px) { .form-standard { padding: 15px; } .form-actions { flex-direction: column; } .btn-submit, .btn-cancel { width: 100%; } }
+
+/* Loading overlay (matches addextension.html) */
+#loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 9999;
+}
+#loading-overlay.active { display: flex; }
+.loader {
+  width: 48px; height: 48px;
+  border: 4px solid #ddd;
+  border-top-color: #007BFF;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  margin-bottom: 12px;
+}
+.loader-text { color: #333; font-size: 14px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Disabled button state */
+.btn-submit[disabled] { opacity: 0.6; cursor: not-allowed; }
+</style>
+
+<script>
+(function() {
+  const form = document.getElementById('edit-ext-form');
+  const overlay = document.getElementById('loading-overlay');
+  const submitBtn = document.getElementById('submit-btn');
+  const genBtn = document.getElementById('gen-secret');
+  const toggleBtn = document.getElementById('toggle-secret');
+  const secretEl = document.getElementById('secret');
+  let submitting = false;
+
+  function genSecret(bytes = 16) {
+    const arr = new Uint8Array(bytes);
+    crypto.getRandomValues(arr);
+    return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  if (genBtn) {
+    genBtn.addEventListener('click', () => {
+      secretEl.value = genSecret(16);
+      if (secretEl.type === 'password') {
+        secretEl.type = 'text';
+        toggleBtn.textContent = 'Hide';
+        setTimeout(() => { secretEl.type = 'password'; toggleBtn.textContent = 'Show'; }, 1200);
+      }
+    });
+  }
+
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      if (secretEl.type === 'password') {
+        secretEl.type = 'text';
+        toggleBtn.textContent = 'Hide';
+      } else {
+        secretEl.type = 'password';
+        toggleBtn.textContent = 'Show';
+      }
+    });
+  }
+
+  form.addEventListener('submit', function(e) {
+    if (submitting) {
+      e.preventDefault();
+      return false;
+    }
+    // Keep validation light here; do full checks server-side
+    const email = document.getElementById('email').value.trim();
+    if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      e.preventDefault();
+      alert('Please enter a valid email address.');
+      return false;
+    }
+
+    submitting = true;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting…';
+    overlay.classList.add('active');
+    // Natural POST; overlay persists until response.
+  });
+})();
+</script>
+{{end}}

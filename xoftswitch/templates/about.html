@@ -1,0 +1,99 @@
+{{define "title"}}About{{end}}
+
+{{define "content"}}
+<h1>About</h1>
+
+<p>XoftSwitch — your VoIP switching platform with web management and systemd service integration.</p>
+
+<div class="about-container">
+  <!-- Version / Build info -->
+  <div class="about-card">
+    <h3>Version & Build</h3>
+    <dl class="kv">
+      {{if .AppName}}    <dt>Product</dt><dd>{{.AppName}}</dd>{{end}}
+      {{if .Version}}    <dt>Version</dt><dd>{{.Version}}</dd>{{end}}
+      {{if .OSArch}}     <dt>OS/Arch</dt><dd>{{.OSArch}}</dd>{{end}}
+      {{if .DocsURL}}    <dt>Docs</dt><dd><a href="{{.DocsURL}}" target="_blank" rel="noopener">{{.DocsURL}}</a></dd>{{end}}
+    </dl>
+  </div>
+
+  <!-- Support contacts -->
+  <div class="about-card">
+    <h3>Support Contacts</h3>
+    <p>If you need assistance with XoftSwitch, please reach out to our support team.</p>
+    <div class="contacts-container">
+      <div class="contact-card">
+        <h4>General Support</h4>
+        <p>Email: <a href="mailto:support@xoftswitch.com">support@xoftswitch.com</a></p>
+        <!-- <p>Phone: <a href="tel:+17027185490">+1 (702) 718-5490</a></p> -->
+        <p>Available: 24/7</p>
+      </div>
+
+      <!-- Optional extra departments; uncomment/customize as needed
+      <div class="contact-card">
+        <h4>Billing</h4>
+        <p>Email: <a href="mailto:billing@xoftswitch.com">billing@xoftswitch.com</a></p>
+        <p>Hours: Mon-Fri 9am-6pm PT</p>
+      </div>
+
+      <div class="contact-card">
+        <h4>Technical Escalation</h4>
+        <p>Email: <a href="mailto:escalation@xoftswitch.com">escalation@xoftswitch.com</a></p>
+        <p>Available: 24/7</p>
+      </div>
+      -->
+    </div>
+  </div>
+</div>
+
+<style>
+  .about-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .about-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    background: #f9f9f9;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  }
+  .contacts-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .contact-card {
+    border: 1px dashed #cfcfcf;
+    border-radius: 8px;
+    padding: 12px;
+    background: #fff;
+  }
+  .about-card h3, .contact-card h4 {
+    margin-top: 0;
+  }
+  .contact-card a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  .contact-card a:hover {
+    text-decoration: underline;
+  }
+  .kv {
+    display: grid;
+    grid-template-columns: max(120px) 1fr;
+    gap: 6px 16px;
+    margin: 0;
+  }
+  .kv dt {
+    font-weight: 600;
+  }
+  .kv dd {
+    margin: 0;
+  }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+</style>
+{{end}}

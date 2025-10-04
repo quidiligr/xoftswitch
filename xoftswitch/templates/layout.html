@@ -1,0 +1,57 @@
+{{define "layout"}}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>{{block "title" .}}Admin{{end}}</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #333;
+      padding: 10px 20px;
+    }
+    .topbar .menu a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      margin-right: 20px;
+      padding: 6px 10px;
+    }
+    .topbar .menu a:hover {
+      background: #444;
+      border-radius: 4px;
+    }
+    .content {
+      padding: 20px; /* Add padding here */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="menu">
+      <a href="/">Dashboard</a>
+      <a href="/extensions">Extensions</a>
+      <a href="/users">Users</a>
+      <a href="/userextensions">User Extensions</a>
+      <a href="/joinrequests">Join Requests</a> <!-- Added Join Requests link -->
+      <a href="/settings">Settings</a>
+      <a href="/about">About</a>
+    </div>
+    <a href="/logout" style="color:#fff;font-weight:bold;">Logout</a>
+  </div>
+
+  <div class="content">
+    {{block "content" .}}{{end}}
+  </div>
+
+  {{block "scripts" .}}{{end}}
+</body>
+</html>
+{{end}}

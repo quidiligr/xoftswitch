@@ -1,0 +1,94 @@
+{{define "title"}}Edit User Extension{{end}}
+{{define "content"}}
+<h1>Edit User Extension</h1>
+
+<style>
+  .form-standard {
+    max-width: 500px;
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  .form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  .form-row label {
+    width: 150px;
+    font-weight: bold;
+  }
+  .form-row input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  button {
+    padding: 10px 18px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #45a049;
+  }
+  a.cancel-link {
+    margin-left: 20px;
+    color: #555;
+    text-decoration: none;
+  }
+  a.cancel-link:hover {
+    text-decoration: underline;
+  }
+  ul.error-list {
+    color: red;
+    margin-bottom: 15px;
+  }
+</style>
+
+{{if .Errors}}
+  <ul class="error-list">
+    {{range .Errors}}
+      <li>{{.}}</li>
+    {{end}}
+  </ul>
+{{end}}
+
+<form method="post" action="/edituserextension" class="form-standard">
+  <!-- preserve original keys -->
+  <input type="hidden" name="original_username" value="{{.Form.OriginalUsername}}">
+  <input type="hidden" name="original_extension" value="{{.Form.OriginalExtension}}">
+
+  <div class="form-row">
+    <label>Username:</label>
+    <input type="text" name="username" value="{{.Form.Username}}" required>
+  </div>
+<!--
+  <div class="form-row">
+    <label>Extension:</label>
+    <input type="text" name="extension" value="{{.Form.Extension}}" required>
+  </div>
+-->
+  <div class="form-row">
+    <label>Extension:</label>
+    <select name="extension" required>
+      {{range .AvailableExtensions}}
+        <option value="{{.}}" {{if eq . $.Form.Extension}}selected{{end}}>{{.}}</option>
+      {{end}}
+    </select>
+  </div>
+  
+  <div class="form-row">
+    <label>Group ID:</label>
+    <input type="text" name="groupid" value="{{.Form.Groupid}}">
+  </div>
+
+  <button type="submit">Save</button>
+  <a href="/userextensions" class="cancel-link">Cancel</a>
+</form>
+{{end}}

@@ -1,0 +1,63 @@
+{{define "title"}}User Extensions{{end}}
+
+{{define "content"}}
+<h1>User Extensions</h1>
+
+{{if .UsernameParam}}
+  <p><strong>Currently viewing extensions for:</strong> {{.UsernameParam}}</p>
+{{end}}
+
+<form method="get" action="/userextensions">
+  <input type="text" name="search" placeholder="Search by username" value="{{.Search}}">
+  <button type="submit">Search</button>
+  {{if .UsernameParam}}
+    <!-- Preserve the username filter if we have one -->
+    <input type="hidden" name="username" value="{{.UsernameParam}}">
+  {{end}}
+</form>
+
+<table border="1" cellpadding="6" cellspacing="0" style="margin-top:10px;">
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Extension</th>
+      <th>Group ID</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  {{if .UserExtensions}}
+    {{range .UserExtensions}}
+      <tr>
+        <td>{{.Username}}</td>
+        <td>{{.Extension}}</td>
+        <td>{{.Groupid}}</td>
+        <td>
+          <a href="/edituserextension?username={{.Username}}&extension={{.Extension}}">Edit</a> |
+          <a href="/deleteuserextension?username={{.Username}}&extension={{.Extension}}" onclick="return confirm('Delete this user extension?');">Delete</a>
+        </td>
+      </tr>
+    {{end}}
+  {{else}}
+    <tr><td colspan="4">No user extensions found.</td></tr>
+  {{end}}
+  </tbody>
+</table>
+
+<div style="margin-top: 10px;">
+  {{if .HasPrev}}
+    <a href="/userextensions?page={{.PrevPage}}{{if .Search}}&search={{.Search}}{{end}}{{if .UsernameParam}}&username={{.UsernameParam}}{{end}}">Prev</a>
+  {{end}}
+  &nbsp; Page {{.Page}} &nbsp;
+  {{if .HasNext}}
+    <a href="/userextensions?page={{.NextPage}}{{if .Search}}&search={{.Search}}{{end}}{{if .UsernameParam}}&username={{.UsernameParam}}{{end}}">Next</a>
+  {{end}}
+</div>
+
+<form action="/adduserextension" method="get" style="margin-top:20px;">
+  {{if .UsernameParam}}
+    <input type="hidden" name="username" value="{{.UsernameParam}}">
+  {{end}}
+  <button type="submit">Add User Extension</button>
+</form>
+{{end}}

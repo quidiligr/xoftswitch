@@ -1,0 +1,123 @@
+{{define "title"}}Add User{{end}}
+{{define "content"}}
+<h1>Add User</h1>
+
+<style>
+  .form-standard {
+    max-width: 500px;
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  .form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  .form-row label {
+    width: 150px;
+    font-weight: bold;
+  }
+  .form-row input,
+  .form-row select {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  button {
+    padding: 10px 18px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #45a049;
+  }
+  a.btn-cancel {
+    margin-left: 20px;
+    color: #555;
+    text-decoration: none;
+  }
+  a.btn-cancel:hover {
+    text-decoration: underline;
+  }
+</style>
+
+{{if .Errors}}
+  <ul style="color:red;">
+    {{range .Errors}}
+      <li>{{.}}</li>
+    {{end}}
+  </ul>
+{{end}}
+
+<form method="post" action="/adduser" class="form-standard" enctype="multipart/form-data">
+  <div class="form-row">
+    <label for="username">Username:</label>
+    <input id="username" type="text" name="username" required>
+  </div>
+
+  <div class="form-row">
+    <label for="name">Name:</label>
+    <input id="name" type="text" name="name">
+  </div>
+
+  <div class="form-row">
+    <label for="firstname">First Name:</label>
+    <input id="firstname" type="text" name="firstname">
+  </div>
+
+  <div class="form-row">
+    <label for="lastname">Last Name:</label>
+    <input id="lastname" type="text" name="lastname">
+  </div>
+
+  <div class="form-row">
+    <label for="email">Email:</label>
+    <input id="email" type="email" name="email">
+  </div>
+
+  <div class="form-row">
+    <label for="phonenumber">Phone:</label>
+    <input id="phonenumber" type="text" name="phonenumber">
+  </div>
+
+  <div class="form-row">
+    <label for="status">Status:</label>
+    <select id="status" name="status">
+      <option value="0">Inactive</option>
+      <option value="1">Active</option>
+      <option value="2">Suspended</option>
+    </select>
+  </div>
+
+  <div class="form-row">
+    <label for="photo">Photo Upload:</label>
+    <input id="photo" type="file" name="photo" accept="image/*">
+  </div>
+
+  <div class="form-row">
+    <label for="roleid">Role ID:</label>
+    <select id="roleid" name="roleid">
+      <option value="employee">Employee</option>
+      <option value="customer">Customer</option>
+      <option value="system">System</option>
+    </select>
+  </div>
+
+  <div class="form-row">
+    <label for="lastname">Home url:</label>
+    <input id="homepageurl" type="text" name="homepageurl">
+  </div>
+
+  <div class="form-row">
+    <button type="submit">Add User</button>
+    <a class="btn-cancel" href="/users">Cancel</a>
+  </div>
+</form>
+{{end}}

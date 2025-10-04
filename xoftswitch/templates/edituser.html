@@ -1,0 +1,105 @@
+{{define "title"}}Edit User{{end}}
+{{define "content"}}
+<h1>Edit User: {{.Username}}</h1>
+
+<style>
+  form.edit-form {
+    max-width: 500px;
+  }
+  .form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .form-row label {
+    width: 150px;
+    font-weight: bold;
+  }
+  .form-row input,
+  .form-row select {
+    flex: 1;
+    padding: 6px;
+  }
+  button {
+    padding: 8px 16px;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  .photo-preview {
+    margin-bottom: 10px;
+  }
+  .photo-preview img {
+    max-height: 100px;
+    border-radius: 4px;
+  }
+</style>
+
+<form method="post" action="/edituser" class="form-standard" enctype="multipart/form-data">
+  <!-- Username is read-only but still sent -->
+  <input type="hidden" name="username" value="{{.Username}}">
+
+  <div class="form-row">
+    <label>Name:</label>
+    <input type="text" name="name" value="{{.Name}}">
+  </div>
+
+  <div class="form-row">
+    <label>First Name:</label>
+    <input type="text" name="firstname" value="{{.Firstname}}">
+  </div>
+
+  <div class="form-row">
+    <label>Last Name:</label>
+    <input type="text" name="lastname" value="{{.Lastname}}">
+  </div>
+
+  <div class="form-row">
+    <label>Email:</label>
+    <input type="email" name="email" value="{{.Email}}">
+  </div>
+
+  <div class="form-row">
+    <label>Phone:</label>
+    <input type="text" name="phonenumber" value="{{.Phonenumber}}">
+  </div>
+
+  <div class="form-row">
+    <label>Status:</label>
+    <select name="status">
+      <option value="0" {{if eq .Status 0}}selected{{end}}>Inactive</option>
+      <option value="1" {{if eq .Status 1}}selected{{end}}>Active</option>
+      <option value="2" {{if eq .Status 2}}selected{{end}}>Suspended</option>
+    </select>
+  </div>
+
+  <div class="form-row">
+    <label>Current Photo:</label>
+    <div class="photo-preview">
+      {{if .Photo}}
+        <img src="/static/uploads/{{.Photo}}" alt="User Photo">
+      {{else}}
+        <span>No photo uploaded</span>
+      {{end}}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <label>Change Photo:</label>
+    <input type="file" name="photo" accept="image/*">
+  </div>
+
+  <div class="form-row">
+    <label>Role ID:</label>
+    <select name="roleid">
+      <option value="employee" {{if eq .Roleid "employee"}}selected{{end}}>Employee</option>
+      <option value="guest" {{if eq .Roleid "customer"}}selected{{end}}>Customer</option>
+      <option value="system" {{if eq .Roleid "system"}}selected{{end}}>System</option>
+    </select>
+  </div>
+
+  <button type="submit">Save Changes</button>
+</form>
+
+<br>
+<a href="/users">← Back to Users</a>
+{{end}}

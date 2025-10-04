@@ -1,0 +1,105 @@
+{{define "title"}}Dashboard{{end}}
+
+{{define "content"}}
+<h1>XoftSwitch ver {{.Version}}</h1>
+
+<div class="charts-container">
+  <div class="chart-box">
+    <h3>CPU Usage (%)</h3>
+    <canvas id="cpuChart"></canvas>
+  </div>
+
+  <div class="chart-box">
+    <h3>Memory Usage (MB)</h3>
+    <canvas id="memChart"></canvas>
+  </div>
+
+  <div class="chart-box">
+    <h3>Network Usage (KB/s)</h3>
+    <canvas id="netChart"></canvas>
+  </div>
+
+  <div class="chart-box">
+    <h3>Disk Usage (GB)</h3>
+    <canvas id="diskChart"></canvas>
+  </div>
+</div>
+
+<style>
+  .charts-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+  }
+
+  .chart-box {
+    flex: 1 1 300px;
+    max-width: 600px;
+    min-width: 280px;
+    height: 320px;
+    box-sizing: border-box;
+  }
+
+  .chart-box canvas {
+    width: 100% !important;
+    height: 250px !important;
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const cpuCtx = document.getElementById('cpuChart').getContext('2d');
+const memCtx = document.getElementById('memChart').getContext('2d');
+const netCtx = document.getElementById('netChart').getContext('2d');
+const diskCtx = document.getElementById('diskChart').getContext('2d');
+
+const cpuData = { labels: [], datasets: [{ label: 'CPU %', borderColor: 'rgb(75, 192, 192)', data: [], fill: false, tension: 0.1 }] };
+const memData = { labels: [], datasets: [{ label: 'Mem MB', borderColor: 'rgb(255, 99, 132)', data: [], fill: false, tension: 0.1 }] };
+const netData = {
+  labels: [],
+  datasets: [
+    { label: 'Net In (KB/s)', borderColor: 'rgb(54, 162, 235)', data: [], fill: false, tension: 0.1 },
+    { label: 'Net Out (KB/s)', borderColor: 'rgb(255, 206, 86)', data: [], fill: false, tension: 0.1 }
+  ]
+};
+const diskData = { labels: [], datasets: [{ label: 'Disk Used (GB)', borderColor: 'rgb(153, 102, 255)', data: [], fill: false, tension: 0.1 }] };
+
+const cpuChart = new Chart(cpuCtx, { type: 'line', data: cpuData, options: { animation: false, scales: { x: { display: false }, y: { beginAtZero: true } } } });
+const memChart = new Chart(memCtx, { type: 'line', data: memData, options: { animation: false, scales: { x: { display: false }, y: { beginAtZero: true } } } });
+const netChart = new Chart(netCtx, { type: 'line', data: netData, options: { animation: false, scales: { x: { display: false }, y: { beginAtZero: true } } } });
+const diskChart = new Chart(diskCtx, { type: 'line', data: diskData, options: { animation: false, scales: { x: { display: false }, y: { beginAtZero: true } } } });
+
+function pushData(time, chartData, values) {
+  if (chartData.labels.length > 30) {
+    chartData.labels.shift();
+    chartData.datasets.forEach(ds => ds.data.shift());
+  }
+  chartData.labels.push(time);
+  values.forEach((val, i) => chartData.datasets[i].data.push(val));
+}
+
+function fetchData() {
+  fetch('/dashboardstatus')
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        console.error(data.error);
+        return;
+      }
+      const time = new Date().toLocaleTimeString();
+      pushData(time, cpuData, [data.cpu]);
+      pushData(time, memData, [data.mem]);
+      pushData(time, netData, [data.net_in, data.net_out]);
+      pushData(time, diskData, [data.disk_used]);
+      cpuChart.update();
+      memChart.update();
+      netChart.update();
+      diskChart.update();
+    })
+    .catch(err => console.error('fetch error', err));
+}
+// update every 2 seconds
+setInterval(fetchData, 2000);
+</script>
+{{end}}

@@ -1,0 +1,155 @@
+{{define "title"}}Settings{{end}}
+
+{{define "content"}}
+<h1>Settings</h1>
+
+{{if .Message}}
+<div class="alert alert-success">{{.Message}}</div>
+{{end}}
+
+{{if .Error}}
+<div class="alert alert-error">{{.Error}}</div>
+{{end}}
+
+<form method="POST" class="form-standard">
+  <!-- Admin Credentials -->
+  <fieldset class="form-section">
+    <legend>Admin Credentials</legend>
+    <div class="form-row">
+      <label>Admin Email</label>
+      <input type="text" name="admin_email" value="{{.AdminEmail}}">
+    </div>
+    <div class="form-row">
+      <label>Admin Username</label>
+      <input type="text" name="admin_username" value="{{.AdminUsername}}">
+    </div>
+    <div class="form-row">
+      <label>Admin Password</label>
+      <input type="text" name="admin_password" value="{{.AdminPassword}}">
+    </div>
+  </fieldset>
+
+  <!-- General -->
+  <fieldset class="form-section">
+    <legend>General</legend>
+    <div class="form-row">
+      <label>Name</label>
+      <input type="text" name="name" value="{{.Name}}">
+    </div>
+    <div class="form-row">
+      <label>Homepage URL</label>
+      <input type="text" name="homepageurl" value="{{.HomepageURL}}">
+    </div>
+    <div class="form-row">
+      <label>Public Hostname</label>
+      <input type="text" name="public_hostname" value="{{.PublicHostname}}">
+    </div>
+    <div class="form-row">
+      <label>Public IP</label>
+      <input type="text" name="public_ip" value="{{.PublicIP}}">
+    </div>
+    <div class="form-row">
+      <label>Max Extensions per User</label>
+      <input type="text" name="max_extension_count_per_user" value="{{.MaxExtensionCountPerUser}}">
+    </div>
+  </fieldset>
+
+  <!-- Asterisk -->
+  <fieldset class="form-section">
+    <legend>Asterisk</legend>
+    <div class="form-row">
+      <label>AMI Username</label>
+      <input type="text" name="ami_username" value="{{.AmiUsername}}">
+    </div>
+    <div class="form-row">
+      <label>AMI Password</label>
+      <input type="text" name="ami_password" value="{{.AmiPassword}}">
+    </div>
+    <div class="form-row">
+      <label>Asterisk Conf Path</label>
+      <input type="text" name="asterisk_conf_path" value="{{.AsteriskConfPath}}">
+    </div>
+    <div class="form-row">
+      <label>Cert Dir</label>
+      <input type="text" name="cert_dir" value="{{.CertDir}}">
+    </div>
+  </fieldset>
+
+  <!-- Branding -->
+  <fieldset class="form-section">
+    <legend>Branding</legend>
+    <div class="form-row">
+      <label>Logo Filename</label>
+      <input type="text" name="logo_filename" value="{{.LogoFilename}}">
+    </div>
+  </fieldset>
+
+  <!-- Wi-Fi / Auto Join -->
+  <fieldset class="form-section">
+    <legend>Wi-Fi / Auto Join</legend>
+    <div class="form-row">
+      <label>Auto Join</label>
+      <input type="text" name="auto_join" value="{{.AutoJoin}}">
+    </div>
+    <div class="form-row">
+      <label>Wi-Fi SSID</label>
+      <input type="text" name="wifi_ssid" value="{{.WifiSSID}}">
+    </div>
+    <div class="form-row">
+      <label>Wi-Fi BSSID</label>
+      <input type="text" name="wifi_bssid" value="{{.WifiBSSID}}">
+    </div>
+  </fieldset>
+
+  <!-- SMTP -->
+  <fieldset class="form-section">
+    <legend>Email / SMTP Settings</legend>
+    <div class="form-row">
+      <label>SMTP Host</label>
+      <input type="text" name="smtp_host" value="{{.SMTPHost}}">
+    </div>
+    <div class="form-row">
+      <label>SMTP Port</label>
+      <input type="text" name="smtp_port" value="{{.SMTPPort}}">
+    </div>
+    <div class="form-row">
+      <label>SMTP Username</label>
+      <input type="text" name="smtp_username" value="{{.SMTPUsername}}">
+    </div>
+    <div class="form-row">
+      <label>SMTP Password</label>
+      <input type="text" name="smtp_password" value="{{.SMTPPassword}}">
+    </div>
+    <div class="form-row">
+      <button type="button" onclick="sendTestEmail(this)">Send Test Email</button>
+      <span id="test-email-result" style="margin-left: 10px;"></span>
+    </div>
+  </fieldset>
+
+  <button type="submit">Save</button>
+</form>
+{{end}}
+
+{{define "scripts"}}
+<script>
+function sendTestEmail(button) {
+  const resultSpan = document.getElementById('test-email-result');
+  resultSpan.textContent = "Sending...";
+  button.disabled = true;
+
+  fetch("/settings/test-email", {
+    method: "POST"
+  })
+  .then(res => res.text())
+  .then(text => {
+    resultSpan.textContent = text;
+  })
+  .catch(err => {
+    resultSpan.textContent = "Failed to send test email.";
+  })
+  .finally(() => {
+    button.disabled = false;
+  });
+}
+</script>
+{{end}}

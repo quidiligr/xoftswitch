@@ -1,0 +1,148 @@
+{{define "title"}}Add User Extension{{end}}
+{{define "content"}}
+<h1>Add User Extension</h1>
+
+<style>
+  .form-standard {
+    max-width: 500px;
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  .form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  .form-row label {
+    width: 150px;
+    font-weight: bold;
+  }
+  .form-row input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .suggestions {
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 2px;
+    max-height: 150px;
+    overflow-y: auto;
+    width: calc(100% - 150px - 20px);
+    z-index: 1000;
+  }
+  .suggestions div {
+    padding: 6px;
+    cursor: pointer;
+  }
+  .suggestions div:hover {
+    background-color: #f0f0f0;
+  }
+  button {
+    padding: 10px 18px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #45a049;
+  }
+  a.cancel-link {
+    margin-left: 20px;
+    color: #555;
+    text-decoration: none;
+  }
+  a.cancel-link:hover {
+    text-decoration: underline;
+  }
+  ul.error-list {
+    color: red;
+    margin-bottom: 15px;
+  }
+</style>
+
+{{if .Errors}}
+  <ul class="error-list">
+    {{range .Errors}}
+      <li>{{.}}</li>
+    {{end}}
+  </ul>
+{{end}}
+
+<form method="post" action="/adduserextension" class="form-standard" autocomplete="off">
+  <div class="form-row" style="position:relative;">
+    <label>Username:</label>
+    <input type="text" id="usernameInput" name="username" value="{{index .Form "Username"}}" required>
+    <div id="usernameSuggestions" class="suggestions" style="display:none;"></div>
+  </div>
+
+  <div class="form-row">
+    <label>Extension:</label>
+    <input type="text" name="extension" value="{{index .Form "Extension"}}" required>
+  </div>
+
+  <div class="form-row">
+    <label>Group ID:</label>
+    <input type="text" name="groupid" value="{{index .Form "Groupid"}}">
+  </div>
+
+  <button type="submit">Save</button>
+  <a href="/userextensions" class="cancel-link">Cancel</a>
+</form>
+
+<script>
+const input = document.getElementById('usernameInput');
+const suggestions = document.getElementById('usernameSuggestions');
+
+let lastQuery = '';
+
+input.addEventListener('input', async () => {
+  const q = input.value.trim();
+  if (q.length < 1) {
+    suggestions.style.display = 'none';
+    return;
+  }
+  if (q === lastQuery) return;
+  lastQuery = q;
+
+  try {
+    const resp = await fetch(`/usernamesta?q=${encodeURIComponent(q)}`);
+    if (!resp.ok) return;
+    const data = await resp.json();
+    const items = data.slice(0, 10);
+    if (items.length === 0) {
+      suggestions.style.display = 'none';
+      return;
+    }
+    suggestions.innerHTML = '';
+    items.forEach(name => {
+      const div = document.createElement('div');
+      div.textContent = name;
+      div.addEventListener('click', () => {
+        input.value = name;
+        suggestions.style.display = 'none';
+      });
+      suggestions.appendChild(div);
+    });
+    suggestions.style.display = 'block';
+  } catch (err) {
+    console.error('fetch usernames error', err);
+    suggestions.style.display = 'none';
+  }
+});
+
+document.addEventListener('click', (e) => {
+  if (!suggestions.contains(e.target) && e.target !== input) {
+    suggestions.style.display = 'none';
+  }
+});
+</script>
+{{end}}
