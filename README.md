@@ -2,7 +2,7 @@
 
 **XoftSwitch** is an open-source VoIP switching & management layer that sits on top of **Asterisk + FreePBX** to make **WebRTC extensions** simple, repeatable, and enterprise-ready. It’s the companion server to the **XoftPhone** clients, enabling single sign-on, near-zero-config onboarding, and optional AI-assisted administration.
 
-> ✅ Free and extensible • 🔒 WebRTC-first • 🤖 AI-assisted ops • 🧩 PMS integration • 🧾 Booking & 🛣️ Drive-thru modules
+> Free and extensible • WebRTC-first • AI-assisted ops • PMS integration • Booking & Drive-thru modules
 
 ---
 
